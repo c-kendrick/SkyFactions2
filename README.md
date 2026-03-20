@@ -17,7 +17,7 @@ This repository serves as a technical showcase of complex third-party API orches
 SkyFactions2 is a competitive multiplayer game mode. It takes the isolated, resource-management gameplay of "Skyblock" (where players survive on floating islands in the void) and introduces the territorial warfare of "Factions" (where teams claim land, forge alliances, and declare war).
 
 **Why build it?**
-Standard Skyblock is purely cooperative, while standard Factions relies on vanilla terrain that gets easily destroyed. SkyFactions2 was developed to create a high-stakes environment where players must physically build their battlegrounds across the void, managing an economy while engaging in complex server-wide diplomacy.
+Standard Skyblock is purely co-operative, while standard Factions relies on vanilla terrain that gets easily destroyed. SkyFactions2 was developed to create a high-stakes environment where players must physically build their battlegrounds across the void, managing an economy while engaging in complex server-wide diplomacy.
 
 **How does it work?**
 1. **Foundation:** A player spends in-game currency to create a sky-faction. The server calculates a mathematically perfectly distanced coordinate in the void and pastes a starting island for them.
@@ -29,14 +29,14 @@ Standard Skyblock is purely cooperative, while standard Factions relies on vanil
 ## 🏗️ Core Architecture & Technical Highlights
 
 ### 1. Spatial Logic & Grid Generation
-Island generation is not randomized; it utilizes a deterministic, expanding grid algorithm to ensure sky-islands never overlap and maintain exact chunk alignments.
+Island generation is not randomised; it utilises a deterministic, expanding grid algorithm to ensure sky-islands never overlap and maintain exact chunk alignments.
 * **Grid Mathematics:** Calculates `row`, `col`, and target vectors using a fixed `distance = 120` block offset to dynamically assign coordinates to new factions.
-* **WorldEdit Integration:** Utilizes the `ClipboardReader` and `EditSession` APIs to programmatically load and paste `.schem` files directly into the world memory space without blocking the main server thread.
+* **WorldEdit Integration:** Utilises the `ClipboardReader` and `EditSession` APIs to programmatically load and paste `.schem` files directly into the world memory space without blocking the main server thread.
 
 ### 2. Region Protection & Sub-Claiming
 Land management hooks deeply into the **WorldGuard API** to dynamically create, modify, and assign permissions to 3D spatial boundaries.
-* **Chunk-Based Math:** Converts standard coordinates into chunk-aligned block vectors (`minX = chunk.getX() << 4`) to generate precise `ProtectedCuboidRegion` objects.
-* **Hierarchical Regions:** Utilizes WorldGuard's `setParent()` methodology to link newly claimed chunks to the faction's master region, allowing for inherited flags (PvP rules, greeting messages) across a continuously expanding territory.
+* **Chunk-Based Maths:** Converts standard coordinates into chunk-aligned block vectors (`minX = chunk.getX() << 4`) to generate precise `ProtectedCuboidRegion` objects.
+* **Hierarchical Regions:** Utilises WorldGuard's `setParent()` methodology to link newly claimed chunks to the faction's master region, allowing for inherited flags (PvP rules, greeting messages) across a continuously expanding territory.
 
 ### 3. Role-Based Access Control (RBAC)
 Internal faction management relies on a strict, custom-built hierarchy that dictates permission levels independent of the server's global permission nodes.
@@ -46,11 +46,11 @@ Internal faction management relies on a strict, custom-built hierarchy that dict
 ### 4. Event-Driven Combat State Machine
 PvP is entirely governed by a custom state machine that tracks diplomatic relations (Alliances, Wars, Neutrality) and intercepts damage events in real-time.
 * **O(1) Combat Resolution:** Active wars are cached in a `HashMap<String, List<String>> warringPlayers`. When a damage event fires, the plugin performs an immediate O(1) lookup to determine if the interaction is legally permitted by the state machine.
-* **Comprehensive Interception:** Listens to `EntityDamageByEntityEvent` to intercept and cancel unauthorized damage, specifically casting and calculating edge cases for `Arrow` and `ThrownPotion` to trace damage back to the original shooter.
+* **Comprehensive Interception:** Listens to `EntityDamageByEntityEvent` to intercept and cancel unauthorised damage, specifically casting and calculating edge cases for `Arrow` and `ThrownPotion` to trace damage back to the original shooter.
 
 ### 5. Custom YAML Data Persistence
 Avoids the overhead of a heavy SQL database by implementing a highly segmented, bespoke YAML File I/O system tailored for Minecraft's lifecycle.
-* **Data Segmentation:** Separates internal application state (`factions.yml`) from user-specific metadata (`data.yml`) to prevent file lock contention and optimize read/write times during server saves.
+* **Data Segmentation:** Separates internal application state (`factions.yml`) from user-specific metadata (`data.yml`) to prevent file lock contention and optimise read/write times during server saves.
 * **Safe Reloads:** Implements custom `DataManager` and `FactionsManager` classes with fallback `InputStreamReader` logic to ensure data integrity during hot-reloads.
 
 ---
@@ -66,12 +66,12 @@ To compile and run this plugin, the server environment must be running Spigot/Pa
 
 ## 🛠️ Command Router Overview
 
-The plugin routes all interactions through a centralized `CommandExecutor`, ensuring custom RBAC permissions and gamestates are validated before executing backend logic.
+The plugin routes all interactions through a centralised `CommandExecutor`, ensuring custom RBAC permissions and gamestates are validated before executing backend logic.
 
 ### Core Foundation
 | Command | Permission Target | Function |
 | :--- | :--- | :--- |
-| `/sf create [name]` | All | Deducts Vault currency, executes grid math, pastes WE schematic, generates WG region. |
+| `/sf create [name]` | All | Deducts Vault currency, executes grid maths, pastes WE schematic, generates WG region. |
 | `/sf disband` | Leader | Deletes the faction, purges YAML data, and wipes the physical island using WE. |
 | `/sf claim` | Officer/Leader | Validates chunk availability and appends a new inherited WG region to the faction. |
 | `/sf unclaim` | Officer/Leader | Removes the chunk from the faction's territory and strips WG protections. |
@@ -94,8 +94,3 @@ The plugin routes all interactions through a centralized `CommandExecutor`, ensu
 | `/sf neutral [faction]` | Leader | Resets diplomatic relations back to the default protected state. |
 | `/sf sethome` | Officer/Leader | Saves the player's current X/Y/Z vector to the YAML file as the faction spawn. |
 | `/sf home` | All | Teleports the player to the saved faction vector. |
-
----
-
-## 👨‍💻 Developer Notes
-Developing SkyFactions2 provided extensive hands-on experience in cross-plugin communication and managing memory states across frequent server ticks. Translating abstract concepts like "Diplomatic Immunity" into raw `EntityDamageEvent` cancellations required rigid adherence to event-driven programming principles and defensive coding against null states.
