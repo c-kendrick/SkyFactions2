@@ -1,4 +1,4 @@
-# SkyFactions2: Ecosystem Integration & Spatial Logic
+# SkyFactions2
 
 [![Spigot API](https://img.shields.io/badge/Spigot_API-1.20+-orange?style=for-the-badge)]()
 [![WorldEdit](https://img.shields.io/badge/WorldEdit_API-Integrated-blue?style=for-the-badge)]()
