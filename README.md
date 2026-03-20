@@ -94,10 +94,10 @@ The plugin routes all interactions through a centralised `CommandExecutor`, ensu
 ### Diplomacy & Teleportation
 | Command | Permission Target | Function |
 | :--- | :--- | :--- |
-| `/sf sethome` | Leader | Saves the player's current X/Y/Z vector to the YAML file as the faction spawn. |
-| `/sf home` | All | Deducts $10 and teleports the player to the saved faction vector. |
-| `/sf declarewar [enemy]` | Leader | Mutates the diplomatic state machine, updates the PvP HashMap, and broadcasts the war. |
-| `/sf joinwar [ally] [enemy]`| Leader | Submits a relational war request to be resolved by the allied faction. |
+| `/sf sethome` | Leader | Saves the player's current X/Y/Z coordinate to the YAML file as the faction home. |
+| `/sf home` | All | Deducts $10 and teleports the player to the saved faction home coordinate. |
+| `/sf declarewar [enemy]` | Leader | Mutates the diplomatic state machine to war, updates the PvP HashMap, and broadcasts the war. |
+| `/sf joinwar [ally] [enemy]`| Leader | Submits a join cooperative war request to be resolved by the allied faction. |
 | `/sf acceptjoin [ally] [enemy]`| Leader | Accepts an allied faction's request to join a war. |
 | `/sf cancelwarapp` | Leader | Cancels a pending application to join an ally's war. |
 | `/sf endwar [enemy]` | Leader | Sues for peace, removing the enemy from the active war data and updating the PvP HashMap. |
