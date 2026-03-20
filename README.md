@@ -1,4 +1,4 @@
-# ☁️ SkyFactions2: Ecosystem Integration & Spatial Logic
+# SkyFactions2: Ecosystem Integration & Spatial Logic
 
 [![Spigot API](https://img.shields.io/badge/Spigot_API-1.20+-orange?style=for-the-badge)]()
 [![WorldEdit](https://img.shields.io/badge/WorldEdit_API-Integrated-blue?style=for-the-badge)]()
@@ -7,11 +7,11 @@
 
 **SkyFactions2** is a custom Java plugin developed for Spigot/Paper server environments. It merges the mechanics of grid-based Skyblock generation with the geopolitical, state-driven gameplay of Factions. 
 
-This repository serves as a technical showcase of complex third-party API orchestration, spatial mathematics, custom data persistence, and event-driven state machines within a live multiplayer environment.
+This repository serves as a technical showcase of third-party API orchestration, spatial mathematics, custom data persistence, and event-driven state machines within a live Minecraft server.
 
 ---
 
-## 📖 The Concept (What, Why, & How)
+## The Concept 
 
 **What is it?**
 SkyFactions2 is a competitive multiplayer game mode. It takes the isolated, resource-management gameplay of "Skyblock" (where players survive on floating islands in the void) and introduces the territorial warfare of "Factions" (where teams claim land, forge alliances, and declare war).
@@ -20,16 +20,16 @@ SkyFactions2 is a competitive multiplayer game mode. It takes the isolated, reso
 Standard Skyblock is purely co-operative, while standard Factions relies on vanilla terrain that gets easily destroyed. SkyFactions2 was developed to create a high-stakes environment where players must physically build their battlegrounds across the void, managing an economy while engaging in complex server-wide diplomacy.
 
 **How does it work?**
-1. **Foundation:** A player spends in-game currency to create a sky-faction. The server calculates a mathematically perfectly distanced coordinate in the void and pastes a starting island for them.
-2. **Expansion:** As the faction gathers resources, they can claim adjacent 16x16 chunk "airspace," expanding their protected 3D building borders.
-3. **Diplomacy & Combat:** Factions operate under strict Role-Based Access Control (Leader, Officer, Member). Leaders can manage diplomacy. If a war is declared, the plugin dynamically registers the state change, allowing rival factions to engage in PvP combat.
+1. **Foundation:** A player spends in-game currency to create a sky-faction. The server calculates a mathematically perfectly distanced coordinate in the void and pastes a starting island for them using the **WorldEdit API.** The **WorldGuard** API is utilised to protect this island from outsiders.
+2. **Expansion:** As the faction gathers resources, they can claim adjacent 16x16 chunk "airspace," expanding their WorldGuard-protected 3D building borders.
+3. **Diplomacy & Combat:** Factions operate under strict Role-Based Access Control (Leader, Officer, Member). Leaders can manage diplomacy. If a war is declared, the plugin dynamically registers the state change, allowing rival factions to engage in PvP combat. WorldGuard protections are lifted, and as such, enemy players can break and place blocks in a player's territory.
 
 ---
 
 ## 🏗️ Core Architecture & Technical Highlights
 
 ### 1. Spatial Logic & Grid Generation
-Island generation is not randomised; it utilises a deterministic, expanding grid algorithm to ensure sky-islands never overlap and maintain exact chunk alignments.
+Island generation is not randomised. It utilises a deterministic, expanding grid algorithm to ensure sky-islands never overlap and maintain exact chunk alignments.
 * **Grid Mathematics:** Calculates `row`, `col`, and target vectors using a fixed `distance = 120` block offset to dynamically assign coordinates to new factions.
 * **WorldEdit Integration:** Utilises the `ClipboardReader` and `EditSession` APIs to programmatically load and paste `.schem` files directly into the world memory space without blocking the main server thread.
 
@@ -45,13 +45,14 @@ Internal faction management relies on a strict, custom-built hierarchy that dict
 
 ### 4. Event-Driven Combat State Machine
 PvP is entirely governed by a custom state machine that tracks diplomatic relations (Wars, Joint Attacks/Defences) and intercepts damage events in real-time.
-* **O(1) Combat Resolution:** Active wars are cached in a `HashMap<String, List<String>> warringPlayers`. When a damage event fires, the plugin performs an immediate O(1) lookup to determine if the interaction is legally permitted by the state machine.
+* **O(1) Combat Resolution:** Active wars and all players are cached in a `HashMap<String, List<String>> warringPlayers`. When a damage event fires, the plugin performs an immediate O(1) lookup to determine if the interaction is legally permitted by the state machine.
 * **Comprehensive Interception:** Listens to `EntityDamageByEntityEvent` to intercept and cancel unauthorised damage, specifically casting and calculating edge cases for `Arrow` and `ThrownPotion` to trace damage back to the original shooter.
 
 ### 5. Custom YAML Data Persistence
-Avoids the overhead of a heavy SQL database by implementing a highly segmented, bespoke YAML File I/O system tailored for Minecraft's lifecycle.
+Utilises a custom YAML File I/O system for local data persistence, allowing server administrators to install the plugin without needing to configure an external database.
 * **Data Segmentation:** Separates internal application state (`factions.yml`) from user-specific metadata (`data.yml`) to prevent file lock contention and optimise read/write times during server saves.
 * **Safe Reloads:** Implements custom `DataManager` and `FactionsManager` classes with fallback `InputStreamReader` logic to ensure data integrity during hot-reloads.
+* **Manual Manipulation:** Server administrators can write to the .yml files to perform tasks that would be lengthy through in-game commands.
 
 ---
 
