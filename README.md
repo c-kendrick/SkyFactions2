@@ -9,8 +9,6 @@
 
 This repository serves as a technical showcase of complex third-party API orchestration, spatial mathematics, custom data persistence, and event-driven state machines within a live multiplayer environment.
 
-> **Status:** Archived (2024 Deployment). This plugin was successfully deployed to a live server environment supporting 200+ users. It is preserved here as a demonstration of backend Java architecture.
-
 ---
 
 ## 🏗️ Core Architecture & Technical Highlights
@@ -57,10 +55,3 @@ The plugin routes all interactions through a centralized `CommandExecutor` (`Isl
 | `/sf declarewar [enemy]` | Leader | Mutates the diplomatic state machine and updates the real-time PvP HashMap. |
 | `/sf joinwar [ally] [enemy]` | Leader | Submits a relational war request to be resolved by the allied faction. |
 | `/sf promote/demote` | Leader | Mutates the YAML hierarchy to grant/revoke Officer status. |
-
----
-
-## 👨‍💻 Engineering Notes
-*This project was developed by Christopher Kendrick.*
-
-Developing SkyFactions2 provided extensive hands-on experience in cross-plugin communication and managing memory states across frequent server ticks. Translating abstract concepts like "Diplomatic Immunity" into raw `EntityDamageEvent` cancellations required rigid adherence to event-driven programming principles and defensive coding against null states.
