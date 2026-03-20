@@ -1,6 +1,5 @@
 # ☁️ SkyFactions2: Ecosystem Integration & Spatial Logic
 
-[![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)]()
 [![Spigot API](https://img.shields.io/badge/Spigot_API-1.20+-orange?style=for-the-badge)]()
 [![WorldEdit](https://img.shields.io/badge/WorldEdit_API-Integrated-blue?style=for-the-badge)]()
 [![WorldGuard](https://img.shields.io/badge/WorldGuard_API-Integrated-red?style=for-the-badge)]()
