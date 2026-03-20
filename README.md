@@ -5,7 +5,7 @@
 [![WorldGuard](https://img.shields.io/badge/WorldGuard_API-Integrated-red?style=for-the-badge)]()
 [![Vault](https://img.shields.io/badge/Vault_API-Integrated-green?style=for-the-badge)]()
 
-**SkyFactions2** is a custom Java plugin engineered for Spigot/Paper server environments. It merges the mechanics of grid-based Skyblock generation with the geopolitical, state-driven gameplay of Factions. 
+**SkyFactions2** is a custom Java plugin for Spigot/Paper server environments. It merges the mechanics of grid-based Skyblock generation with the geopolitical, state-driven gameplay of Factions. 
 
 This repository serves as a technical showcase of complex third-party API orchestration, spatial mathematics, custom data persistence, and event-driven state machines within a live multiplayer environment.
 
