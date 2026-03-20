@@ -1,0 +1,17 @@
+name: Skyfactions2
+version: '${project.version}'
+main: me.wrenthen.skyfactions2.Skyfactions2
+api-version: 1.19
+prefix: SF
+depend: [WorldEdit, WorldGuard, Vault]
+authors: [Wrenthen]
+description: Skyblock factions
+commands:
+  sf:
+    description: Skyblock faction commands
+    usage: /<command>
+  bal:
+    description: Check your bank balance
+    usage: /<command>
+    aliases: [balance, money, bank]
+
