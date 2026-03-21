@@ -7,7 +7,7 @@
 
 **SkyFactions2** is a custom Java plugin developed for Spigot/Paper server environments. It merges the mechanics of grid-based Skyblock generation with the geopolitical, state-driven gameplay of Factions. 
 
-This repository serves as a technical showcase of third-party API orchestration, spatial mathematics, custom data persistence, and event-driven state machines within a live Minecraft server.
+This project implements third-party API orchestration, spatial mathematics, custom data persistence, and event-driven state machines within a live Minecraft server.
 
 ---
 
@@ -20,13 +20,13 @@ SkyFactions2 is a competitive multiplayer game mode. It takes the isolated, reso
 Standard Skyblock is purely co-operative, while standard Factions relies on vanilla terrain that gets easily destroyed. SkyFactions2 was developed to create a high-stakes environment where players must physically build their battlegrounds across the void, managing an economy while engaging in complex server-wide diplomacy.
 
 **How does it work?**
-1. **Foundation:** A player spends in-game currency to create a sky-faction. The server calculates a mathematically perfectly distanced coordinate in the void and pastes a starting island for them using the **WorldEdit API.** The **WorldGuard** API is utilised to protect this island from outsiders.
+1. **Foundation:** A player spends in-game currency to create a sky-faction. The server calculates a fixed-distance coordinate in the void and pastes a starting island for them using the **WorldEdit API.** The **WorldGuard** API is utilised to protect this island from outsiders.
 2. **Expansion:** As the faction gathers resources, they can claim adjacent 16x16 chunk "airspace," expanding their WorldGuard-protected 3D building borders.
-3. **Diplomacy & Combat:** Factions operate under strict Role-Based Access Control (Leader, Officer, Member). Leaders can manage diplomacy. If a war is declared, the plugin dynamically registers the state change, allowing rival factions to engage in PvP combat. WorldGuard protections are lifted, and as such, enemy players can break and place blocks in a player's territory.
+3. **Diplomacy & Combat:** Factions operate under strict Role-Based Access Control (Leader, Officer, Member). Leaders can manage diplomacy. If a war is declared, the plugin dynamically registers the state change, allowing rival factions to engage in PvP combat. WorldGuard protections are lifted allowing enemy players to break and place blocks in a player's territory.
 
 ---
 
-## 🏗️ Core Architecture & Technical Highlights
+## Core Architecture & Technical Highlights
 
 ### 1. Spatial Logic & Grid Generation
 Island generation is not randomised. It utilises a deterministic, expanding grid algorithm to ensure sky-islands never overlap and maintain exact chunk alignments.
@@ -34,7 +34,7 @@ Island generation is not randomised. It utilises a deterministic, expanding grid
 * **WorldEdit Integration:** Utilises the `ClipboardReader` and `EditSession` APIs to programmatically load and paste `.schem` files directly into the world memory space without blocking the main server thread.
 
 ### 2. Region Protection & Sub-Claiming
-Land management hooks deeply into the **WorldGuard API** to dynamically create, modify, and assign permissions to 3D spatial boundaries.
+Land management hooks into the **WorldGuard API** to dynamically create, modify, and assign permissions to 3D spatial boundaries.
 * **Chunk-Based Maths:** Converts standard coordinates into chunk-aligned block vectors (`minX = chunk.getX() << 4`) to generate precise `ProtectedCuboidRegion` objects.
 * **Hierarchical Regions:** Utilises WorldGuard's `setParent()` methodology to link newly claimed chunks to the faction's master region, allowing for inherited flags (PvP rules, greeting messages) across a continuously expanding territory.
 
@@ -46,17 +46,17 @@ Internal faction management relies on a strict, custom-built hierarchy that dict
 ### 4. Event-Driven Combat State Machine
 PvP is entirely governed by a custom state machine that tracks diplomatic relations (Wars, Joint Attacks/Defences) and intercepts damage events in real-time.
 * **O(1) Combat Resolution:** Active wars and all players are cached in a `HashMap<String, List<String>> warringPlayers`. When a damage event fires, the plugin performs an immediate O(1) lookup to determine if the interaction is legally permitted by the state machine.
-* **Comprehensive Interception:** Listens to `EntityDamageByEntityEvent` to intercept and cancel unauthorised damage, specifically casting and calculating edge cases for `Arrow` and `ThrownPotion` to trace damage back to the original shooter.
+* **Event Interception:** Listens to `EntityDamageByEntityEvent` to intercept and cancel unauthorised damage, specifically casting and calculating edge cases for `Arrow` and `ThrownPotion` to trace damage back to the original shooter.
 
 ### 5. Custom YAML Data Persistence
-Utilises a custom YAML File I/O system for local data persistence, allowing server administrators to install the plugin without needing to configure an external database.
+The plugin utilises a custom YAML File I/O system for local data persistence, allowing server administrators to install the plugin without needing to configure an external database.
 * **Data Segmentation:** Separates internal application state (`factions.yml`) from user-specific metadata (`data.yml`) to prevent file lock contention and optimise read/write times during server saves.
 * **Safe Reloads:** Implements custom `DataManager` and `FactionsManager` classes with fallback `InputStreamReader` logic to ensure data integrity during hot-reloads.
-* **Manual Manipulation:** Server administrators can write to the .yml files to perform tasks that would be lengthy through in-game commands.
+* **Direct Configuration:** Administrators can edit the .yml files directly to execute bulk changes outside of in-game commands.
 
 ---
 
-## ⚙️ Dependencies
+## Dependencies
 
 To compile and run this plugin, the server environment must be running Spigot/Paper and have the following API plugins installed:
 * **Vault** (Requires a compatible economy provider)
@@ -65,7 +65,7 @@ To compile and run this plugin, the server environment must be running Spigot/Pa
 
 ---
 
-## 🛠️ Command Router Overview
+## Command Router Overview
 
 The plugin routes all interactions through a centralised `CommandExecutor`, ensuring custom RBAC permissions, Vault balances, and gamestates are validated before executing backend logic.
 
